@@ -6,6 +6,8 @@ class Settings(BaseSettings):
 
     app_name: str = "vision-agent-platform"
     upload_dir: str = "data/uploads"
+    models_dir: str = "data/models"
+    output_dir: str = "data/outputs"
     database_url: str = "sqlite+aiosqlite:///./data/app.db"
 
 settings = Settings()

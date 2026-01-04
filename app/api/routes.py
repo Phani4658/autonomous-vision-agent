@@ -7,6 +7,7 @@ from app.services.detection_stub import detect_stub
 from app.services.llm_stub import answer_stub
 from app.core.logging import setup_logging
 from app.core.middleware import get_request_id
+from app.adapters.detection_yolo_impl import YOLODetectionService
 
 router = APIRouter()
 logger = setup_logging()
@@ -38,6 +39,7 @@ async def ingest(file: UploadFile = File(...)):
 
 @router.post("/detect")
 async def detect(payload: dict):
+    detector = YOLODetectionService()
     asset_id = payload.get("asset_id")
     if not asset_id:
         raise HTTPException(status_code=400, detail="asset_id required")
@@ -51,7 +53,7 @@ async def detect(payload: dict):
     log = logger.bind(request_id=get_request_id(), asset_id=asset_id)
     log.info("Running detection")
 
-    return detect_stub(asset_id)
+    return await detector.detect(asset.local_path, asset_id)
 
 @router.post("/ask")
 async def ask(payload: dict):
